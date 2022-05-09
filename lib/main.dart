@@ -1,78 +1,10 @@
-import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Point {
-  // Represents a point in (X, Y) space
-  double x;
-  double y;
-
-  Point(this.x, this.y);
-
-  List<Point> get adjacent {
-    return [Point(x + 1, y), Point(x - 1, y), Point(x, y + 1), Point(x, y - 1)];
-  }
-
-  bool insideLimit(double height, double width) {
-    return (x.abs() < height / 2) && (y.abs() < width / 2);
-  }
-
-  @override
-  get hashCode {
-    // Point hash using Cantor's enumeration of pairs
-    return ((x + y)*(x + y + 1)/2) + y as int;
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is Point && x == other.x && y == other.y;
-  }
-}
-
-class GameOfLife {
-  // Represents an instance of Conway's Game of Life
-
-  final double heightLimit; // Limit on simulation's X value
-  final double widthLimit; // Limit on simulation's Y value
-
-  Map<Point, bool> state = {}; // Alive cells information
-  double iteration = 0; // Iteration count
-  static const int timeout = 3; // Time between updates
-
-  GameOfLife(this.heightLimit, this.widthLimit);
-
-  void calculateNextStep() {
-    // Updates the state of the game
-    Map<Point, bool> newState = {};
-    for(var key in state.keys.where((k) => k.insideLimit(heightLimit, widthLimit))) {
-      var counter = 0;
-      for(var adj in key.adjacent) {
-        if (state[adj] ?? false) {
-          counter++;
-          continue;
-        }
-        final neighbors = adj.adjacent.where((e) => state[e] ?? false).length;
-        if (neighbors == 2 || neighbors == 3) {
-          newState[adj] = true;
-        }
-      }
-      if (counter == 2 || counter == 3) {
-        newState[key] = true;
-      }
-    }
-    state = newState;
-    ++iteration;
-  }
-
-  void startCalculation() {
-    // Begins the execution of the game
-    Timer.periodic(const Duration(seconds: timeout), (_) {
-      calculateNextStep();
-    });
-  }
-}
+import 'game_of_life.dart';
+import 'colors.dart';
 
 void main() {
   runApp(const Homepage());
