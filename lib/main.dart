@@ -15,10 +15,7 @@ class Homepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Vicente Juárez',
-      home: NamePage()
-    );
+    return const MaterialApp(title: 'Vicente Juárez', home: NamePage());
   }
 }
 
@@ -30,116 +27,123 @@ class NamePage extends StatefulWidget {
 }
 
 class _NamePageState extends State<NamePage> {
+  final _gameOfLifeState = GameOfLife();
+  int pixelSize = 0;
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-      CustomPaint(
-        painter: GameOfLifeDisplay(),
-        size: Size(
-          MediaQuery.of(context).size.width,
-          MediaQuery.of(context).size.height),
-      ),
-      Scaffold(
-        body: Center(
-          child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'VICENTE JUÁREZ',
-              style: GoogleFonts.novaMono(
-                  color: Colors.black,
-                  fontSize: 48
-              ),
-            ),
-            Text(
-              'Software Development',
-              style: GoogleFonts.novaMono(
-                  color: Colors.black,
-                  fontSize: 16
-              ),
-            )
-          ],
-        ),
-        ),
-        backgroundColor: Colors.transparent,
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          backgroundColor: Color(0xFF6200EE),
-          selectedItemColor: Colors.white,
-          unselectedItemColor: Colors.white,
-          selectedFontSize: 14,
-          unselectedFontSize: 14,
-          onTap: (value) {
-          // Respond to item press.
-          },
-          items: const [
-            BottomNavigationBarItem(
-              label: 'Curriculum Vitae',
-              icon: Icon(Icons.document_scanner),
-            ),
-            BottomNavigationBarItem(
-              label: 'Email',
-              icon: Icon(Icons.email),
-            ),
-            BottomNavigationBarItem(
-              label: 'Github',
-              icon: Icon(Icons.account_tree),
-            ),
-          ],
-        ),
-        ),
-      ],
+    final dpr = MediaQuery.of(context).devicePixelRatio;
+    pixelSize = GameOfLifePainter.pixelSizeCal(dpr);
+    _gameOfLifeState.resize(
+      newHeight: (MediaQuery.of(context).size.height / pixelSize).ceil(),
+      newWidth: (MediaQuery.of(context).size.width / pixelSize).ceil(),
     );
+    return Listener(
+        onPointerMove: _updatePointerSpawn,
+        child: MouseRegion(
+            onHover: _updatePointerSpawn,
+            child: Stack(
+              children: <Widget>[
+                ImageFiltered(
+                    imageFilter: ImageFilter.blur(sigmaX: 5.0, sigmaY: 5.0),
+                    child: ValueListenableBuilder(
+                      valueListenable: _gameOfLifeState.iteration,
+                      builder: (context, value, child) => CustomPaint(
+                        painter: GameOfLifePainter(
+                            dpr,
+                            _gameOfLifeState),
+                        size: Size(MediaQuery.of(context).size.width,
+                            MediaQuery.of(context).size.height),
+                        isComplex: true,
+                      ),
+                    )),
+                Scaffold(
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'VICENTE JUÁREZ',
+                          style: GoogleFonts.novaMono(
+                              color: Colors.black, fontSize: 48),
+                        ),
+                        Text(
+                          'Software Development',
+                          style: GoogleFonts.novaMono(
+                              color: Colors.black, fontSize: 16),
+                        )
+                      ],
+                    ),
+                  ),
+                  backgroundColor: Colors.transparent,
+                  bottomNavigationBar: BottomNavigationBar(
+                    type: BottomNavigationBarType.fixed,
+                    backgroundColor: materialYellow300,
+                    selectedItemColor: Colors.black,
+                    unselectedItemColor: Colors.black,
+                    selectedFontSize: 14,
+                    unselectedFontSize: 14,
+                    onTap: (value) {
+                      // Respond to item press.
+                    },
+                    items: const [
+                      BottomNavigationBarItem(
+                        label: 'Curriculum Vitae',
+                        icon: Icon(Icons.document_scanner),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Email',
+                        icon: Icon(Icons.email),
+                      ),
+                      BottomNavigationBarItem(
+                        label: 'Github',
+                        icon: Icon(Icons.account_tree),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            )));
+  }
+
+  _updatePointerSpawn(PointerEvent event) {
+    final pointerX = event.localPosition.dx;
+    final pointerY = event.localPosition.dy;
+    _gameOfLifeState.addCell(pointerX ~/ pixelSize, pointerY ~/ pixelSize);
   }
 }
 
-class GameOfLifeDisplay extends CustomPainter {
+class GameOfLifePainter extends CustomPainter {
+  final GameOfLife gameState;
+  final double dpr;
+  late final int pixelSize;
+
+  static const densityRatio = 32;
+
+  GameOfLifePainter(this.dpr, this.gameState) {
+    pixelSize = pixelSizeCal(dpr);
+  }
+
+  static int pixelSizeCal(double dpr) {
+    return (dpr * densityRatio).round();
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
-    final Rect rect = Offset.zero & size;
-    const RadialGradient gradient = RadialGradient(
-      center: Alignment(0.7, -0.6),
-      radius: 0.2,
-      colors: <Color>[Color(0xFFFFFF00), Color(0xFF0099FF)],
-      stops: <double>[0.4, 1.0],
-    );
-    canvas.drawRect(
-      rect,
-      Paint()..shader = gradient.createShader(rect),
-    );
+    final currentState = {...gameState.state};
+    gameState.markedForRedraw = false;
+
+    final size = Size(pixelSize as double, pixelSize as double);
+    final paint = Paint()..color = materialYellow50;
+
+    for (var point in currentState) {
+      final Rect rect = point.offset(size) & size;
+      canvas.drawRect(rect, paint);
+    }
   }
 
   @override
-  SemanticsBuilderCallback get semanticsBuilder {
-    return (Size size) {
-      // Annotate a rectangle containing the picture of the sun
-      // with the label "Sun". When text to speech feature is enabled on the
-      // device, a user will be able to locate the sun on this picture by
-      // touch.
-      Rect rect = Offset.zero & size;
-      final double width = size.shortestSide * 0.4;
-      rect = const Alignment(0.8, -0.9).inscribe(Size(width, width), rect);
-      return <CustomPainterSemantics>[
-        CustomPainterSemantics(
-          rect: rect,
-          properties: const SemanticsProperties(
-            label: 'Sun',
-            textDirection: TextDirection.ltr,
-          ),
-        ),
-      ];
-    };
+  bool shouldRepaint(GameOfLifePainter oldDelegate) {
+    return gameState.markedForRedraw;
   }
-
-  // Since this Sky painter has no fields, it always paints
-  // the same thing and semantics information is the same.
-  // Therefore we return false here. If we had fields (set
-  // from the constructor) then we would return true if any
-  // of them differed from the same fields on the oldDelegate.
-  @override
-  bool shouldRepaint(GameOfLifeDisplay oldDelegate) => false;
-  @override
-  bool shouldRebuildSemantics(GameOfLifeDisplay oldDelegate) => false;
 }
