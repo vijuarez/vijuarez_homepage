@@ -1,6 +1,8 @@
 import 'dart:ui';
+import 'dart:html' as html;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'game_of_life.dart';
@@ -30,6 +32,10 @@ class _NamePageState extends State<NamePage> {
   final _gameOfLifeState = GameOfLife();
   int pixelSize = 0;
 
+
+  static String githubURL = 'https://github.com/vijuarez';
+  static String email = 'hello@vijuarez.xyz';
+
   @override
   Widget build(BuildContext context) {
     final dpr = MediaQuery.of(context).devicePixelRatio;
@@ -49,9 +55,7 @@ class _NamePageState extends State<NamePage> {
                     child: ValueListenableBuilder(
                       valueListenable: _gameOfLifeState.iteration,
                       builder: (context, value, child) => CustomPaint(
-                        painter: GameOfLifePainter(
-                            dpr,
-                            _gameOfLifeState),
+                        painter: GameOfLifePainter(dpr, _gameOfLifeState),
                         size: Size(MediaQuery.of(context).size.width,
                             MediaQuery.of(context).size.height),
                         isComplex: true,
@@ -83,8 +87,37 @@ class _NamePageState extends State<NamePage> {
                     unselectedItemColor: Colors.black,
                     selectedFontSize: 14,
                     unselectedFontSize: 14,
-                    onTap: (value) {
-                      // Respond to item press.
+                    onTap: (index) {
+                      switch (index) {
+                        case 0:
+                          {
+                            // Open CV links
+                          }
+                          break;
+
+                        case 1:
+                          {
+                            // Copy email
+                            Clipboard.setData(ClipboardData(text: email));
+                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("Copied"),
+                            ));
+                          }
+                          break;
+
+                        case 2:
+                          {
+                            // Open GitHub link
+                            html.window.open(githubURL, '_blank');
+                          }
+                          break;
+
+                        default:
+                          {
+                            throw ArgumentError.value(
+                                index, 'index', 'not a valid tap index');
+                          }
+                      }
                     },
                     items: const [
                       BottomNavigationBarItem(
