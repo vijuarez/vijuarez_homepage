@@ -134,7 +134,7 @@ class GameOfLifePainter extends CustomPainter {
     gameState.markedForRedraw = false;
 
     final size = Size(pixelSize as double, pixelSize as double);
-    final paint = Paint()..color = materialYellow50;
+    final paint = Paint()..color = materialYellow100;
 
     for (var point in currentState) {
       final Rect rect = point.offset(size) & size;
