@@ -113,12 +113,27 @@ class GameOfLife {
   ///
   /// If working with non-integer space, you can pass [unit] as the iteration
   /// step for the population. By default, it's 1.
-  void populate(num? oldHeight, num? oldWidth, {unit = 1}) {
+  void populate(num oldHeight, num oldWidth, {unit = 1}) {
     final rng = Random();
 
-    // Travels through cell space and assigns starting positions
-    for (num i = oldHeight ?? 0; i < heightLimit; i += unit) {
-      for (num j = oldWidth ?? 0; j < widthLimit; j += unit) {
+    // Travels from oldWidth to widthLimit on X, and from 0 to oldHeight on Y.
+    // In an used board, this will populate to the right of the old space, and
+    // won't populate anything in an brand new board (where oldWidth and
+    // oldHeight are both zero)
+    for (num i = oldWidth; i < widthLimit; i += unit) {
+      for (num j = 0; j < oldHeight; j += unit) {
+        if (rng.nextInt(100) < 100 * spawnChance) {
+          state.add(Point(i, j));
+        }
+      }
+    }
+
+    // Travels from 0 to widthLimit on X, and from oldHeight to heightLimit on
+    // Y. In an used board, this will populate the bottom of the old space, and
+    // the bottom-right quadrant of the new space. In a new board, this will
+    // populate the entire board.
+    for (num i = 0; i < widthLimit; i += unit) {
+      for (num j = oldHeight; j < heightLimit; j += unit) {
         if (rng.nextInt(100) < 100 * spawnChance) {
           state.add(Point(i, j));
         }
