@@ -35,6 +35,9 @@ dependencies:
   cupertino_icons: ^1.0.2
   google_fonts: ^2.3.2
 
+  flutter_localizations:
+    sdk: flutter
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -87,3 +90,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+flutter_intl:
+  enabled: true

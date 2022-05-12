@@ -1,6 +1,9 @@
 import 'dart:ui';
 import 'dart:html' as html;
 
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'generated/l10n.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -17,7 +20,17 @@ class Homepage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Vicente Juárez', home: NamePage());
+    return MaterialApp(
+        title: 'Vicente Juárez',
+        home: const NamePage(),
+        localizationsDelegates: const [
+          S.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: S.delegate.supportedLocales,
+    );
   }
 }
 
@@ -72,7 +85,7 @@ class _NamePageState extends State<NamePage> {
                               color: Colors.black, fontSize: 48),
                         ),
                         Text(
-                          'Software Development',
+                          S.current.jobTitle,
                           style: GoogleFonts.novaMono(
                               color: Colors.black, fontSize: 16),
                         )
@@ -99,8 +112,8 @@ class _NamePageState extends State<NamePage> {
                           {
                             // Copy email
                             Clipboard.setData(ClipboardData(text: email));
-                            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                              content: Text("Copied"),
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(S.current.copyMessage(email)),
                             ));
                           }
                           break;
