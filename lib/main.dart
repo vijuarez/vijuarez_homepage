@@ -46,6 +46,9 @@ class _NamePageState extends State<NamePage> {
   int pixelSize = 0;
 
 
+  static Map<String, String> cvURL = {
+    'es': 'https://drive.google.com/file/d/1BSlZC7G2mKSf-kliCmaQifOK2QD-EQlw/view?usp=sharing'
+  };
   static String githubURL = 'https://github.com/vijuarez';
   static String email = 'hello@vijuarez.xyz';
 
@@ -105,6 +108,7 @@ class _NamePageState extends State<NamePage> {
                         case 0:
                           {
                             // Open CV links
+                            html.window.open(cvURL['es'] ?? '#', '_blank');
                           }
                           break;
 
