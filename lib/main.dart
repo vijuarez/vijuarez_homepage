@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'dart:html' as html;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 
@@ -86,11 +87,13 @@ class _NamePageState extends State<NamePage> {
                           'VICENTE JUÁREZ',
                           style: GoogleFonts.novaMono(
                               color: Colors.black, fontSize: 48),
+                          textAlign: TextAlign.center
                         ),
                         Text(
                           S.current.jobTitle,
                           style: GoogleFonts.novaMono(
                               color: Colors.black, fontSize: 16),
+                          textAlign: TextAlign.center
                         )
                       ],
                     ),
