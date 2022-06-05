@@ -72,12 +72,12 @@ class GameOfLife {
   int? lastIteration;
 
   /// Time between updates
-  static const int timeout = 1;
+  final int timeout;
 
   /// Chance of starting cell being alive or not
-  static const spawnChance = 0.3;
+  final double spawnChance;
 
-  GameOfLife() {
+  GameOfLife({ this.timeout = 1, this.spawnChance = 0.3 }) {
     // Begins async calculation of the next state
     _startCalculation();
   }
@@ -95,7 +95,8 @@ class GameOfLife {
   }
 
   /// Adds a new cell to the specified position. If it returns `true`, then
-  /// there was already a cell there. If not, the cell is new.
+  /// there was already a cell there. If not, the cell is new, and a redraw
+  /// is called.
   bool addCell(num posX, num posY) {
     final newPoint = Point(posX, posY);
     final isThere = state.contains(newPoint);
@@ -108,7 +109,7 @@ class GameOfLife {
   }
 
   /// Assigns a random starting position to the cells in the game, iterating
-  /// through the [oldHeight] <= y < [heightLimit] and [oldWidth]<= y
+  /// through the [oldHeight] <= y < [heightLimit] and [oldWidth] <= y
   /// < [widthLimit] space and setting cells to live with a p of [spawnChance].
   ///
   /// If working with non-integer space, you can pass [unit] as the iteration
@@ -160,11 +161,11 @@ class GameOfLife {
     return Stream.fromIterable(relevantKeys).fold(newState,
         (Set<Point> newState, Point key) {
       // Stream each point calculation in order to give breathing room to the main thread
-      var counter = 0;
+      var aliveAdjacentCounter = 0;
       for (var adj in key.adjacent) {
         // Skip "springs to life" step if already alive
         if (oldState.contains(adj)) {
-          counter++;
+          aliveAdjacentCounter++;
           continue;
         }
         // Skip "springs to life" step if other cells set it as alive already
@@ -177,7 +178,7 @@ class GameOfLife {
           }
         }
       }
-      if (counter == 2 || counter == 3) {
+      if (aliveAdjacentCounter == 2 || aliveAdjacentCounter == 3) {
         // Cell survives when there are 2 or 3 neighbors.
         newState.add(key);
       }
@@ -189,7 +190,7 @@ class GameOfLife {
   /// seconds and updating the current state of the game when done.
   void _startCalculation() {
     // Fires a new task every $timeout seconds
-    Timer.periodic(const Duration(seconds: timeout), (_) {
+    Timer.periodic(Duration(seconds: timeout), (_) {
       if (lastIteration == iteration.value) {
         // If last task didn't finish, skip this execution
         return;
