@@ -1,7 +1,6 @@
 import 'dart:ui';
 import 'dart:html' as html;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'generated/l10n.dart';
 
@@ -48,10 +47,11 @@ class _NamePageState extends State<NamePage> {
 
 
   static Map<String, String> cvURL = {
-    'es': 'https://drive.google.com/file/d/1BSlZC7G2mKSf-kliCmaQifOK2QD-EQlw/view?usp=sharing'
+    'es': 'https://drive.google.com/file/d/1C_yKmYw_8gC8DseeZ2HWSAOJJ1wgyypa/view?usp=sharing',
+    'en': 'https://drive.google.com/file/d/11i6vojPlwkcrLD8WArkPzSie5oVZD4m7/view?usp=sharing'
   };
   static String githubURL = 'https://github.com/vijuarez';
-  static String email = 'hello@vijuarez.xyz';
+  static String email = 'vijuarez97@gmail.com';
 
   @override
   Widget build(BuildContext context) {
@@ -111,7 +111,44 @@ class _NamePageState extends State<NamePage> {
                         case 0:
                           {
                             // Open CV links
-                            html.window.open(cvURL['es'] ?? '#', '_blank');
+                            showModalBottomSheet<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Container(
+                                  height: 200,
+                                  color: materialYellow400,
+                                  child: Center(
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            IconButton(
+                                                iconSize: 72,
+                                                icon: Image.asset('icons/flags/png/cl.png', package: 'country_icons'),
+                                                onPressed: () {
+                                                  html.window.open(cvURL['es'] ?? '#', '_blank');
+                                                  Navigator.pop(context);
+                                                }
+                                            ),
+                                            IconButton(
+                                                iconSize: 72,
+                                                icon: Image.asset('icons/flags/png/us.png', package: 'country_icons'),
+                                                onPressed: () {
+                                                  html.window.open(cvURL['en'] ?? '#', '_blank');
+                                                  Navigator.pop(context);
+                                                }
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
                           }
                           break;
 
