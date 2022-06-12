@@ -3,12 +3,8 @@ const MANIFEST = 'flutter-app-manifest';
 const TEMP = 'flutter-temp-cache';
 const CACHE_NAME = 'flutter-app-cache';
 const RESOURCES = {
-  "canvaskit/canvaskit.js": "c2b4e5f3d7a3d82aed024e7249a78487",
-"canvaskit/canvaskit.wasm": "4b83d89d9fecbea8ca46f2f760c5a9ba",
-"canvaskit/profiling/canvaskit.js": "ae2949af4efc61d28a4a80fffa1db900",
-"canvaskit/profiling/canvaskit.wasm": "95e736ab31147d1b2c7b25f11d4c32cd",
-"index.html": "d0085b57efccc04af609b7da49cec16a",
-"/": "d0085b57efccc04af609b7da49cec16a",
+  "index.html": "0e3188572d4267645dd5d15ec474cc62",
+"/": "0e3188572d4267645dd5d15ec474cc62",
 "icons/Icon-maskable-512.png": "34dc1fe6e3703e927e2261a1c1b665c6",
 "icons/Icon-512.png": "34dc1fe6e3703e927e2261a1c1b665c6",
 "icons/Icon-maskable-192.png": "fe244c0bc9ae8f9c1e96037f14d38307",
@@ -786,8 +782,7 @@ const RESOURCES = {
 "assets/packages/country_icons/icons/flags/svg/dj.svg": "c33fb6a3b31067ceaa6e34e64d903eb9",
 "assets/packages/country_icons/icons/flags/svg/co.svg": "d1a61f9499bd5d5ab4ffa6dcb3ce5c09",
 "version.json": "f76c2a08e1f1494dc3903f3e05ba0baf",
-"main.dart.js": "80417965604ecd979cc89fdae5f72c29",
-"flutter.js": "0816e65a103ba8ba51b174eeeeb2cb67",
+"main.dart.js": "d6aa9596675fe032ec6f749e0f1cd10e",
 "favicon.png": "3e8c9990928d64fb065e0facabb59c79"
 };
 
