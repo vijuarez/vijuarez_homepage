@@ -6,7 +6,6 @@ import 'generated/l10n.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'game_of_life.dart';
 import 'colors.dart';
@@ -30,7 +29,9 @@ class Homepage extends StatelessWidget {
           GlobalCupertinoLocalizations.delegate,
         ],
         supportedLocales: S.delegate.supportedLocales,
-    );
+        theme: lightTheme,
+        darkTheme: darkTheme,
+        themeMode: ThemeMode.system);
   }
 }
 
@@ -45,10 +46,11 @@ class _NamePageState extends State<NamePage> {
   final _gameOfLifeState = GameOfLife();
   int pixelSize = 0;
 
-
   static Map<String, String> cvURL = {
-    'es': 'https://drive.google.com/file/d/1C_yKmYw_8gC8DseeZ2HWSAOJJ1wgyypa/view?usp=sharing',
-    'en': 'https://drive.google.com/file/d/11i6vojPlwkcrLD8WArkPzSie5oVZD4m7/view?usp=sharing'
+    'es':
+        'https://drive.google.com/file/d/1C_yKmYw_8gC8DseeZ2HWSAOJJ1wgyypa/view?usp=sharing',
+    'en':
+        'https://drive.google.com/file/d/11i6vojPlwkcrLD8WArkPzSie5oVZD4m7/view?usp=sharing'
   };
   static String githubURL = 'https://github.com/vijuarez';
   static String email = 'vijuarez97@gmail.com';
@@ -72,10 +74,14 @@ class _NamePageState extends State<NamePage> {
                     child: ValueListenableBuilder(
                       valueListenable: _gameOfLifeState.iteration,
                       builder: (context, value, child) => CustomPaint(
-                        painter: GameOfLifePainter(dpr, _gameOfLifeState),
+                        foregroundPainter: GameOfLifePainter(dpr,
+                            _gameOfLifeState, Theme.of(context).highlightColor),
                         size: Size(MediaQuery.of(context).size.width,
                             MediaQuery.of(context).size.height),
                         isComplex: true,
+                        child: Container(
+                          color: Theme.of(context).scaffoldBackgroundColor,
+                        ),
                       ),
                     )),
                 Scaffold(
@@ -83,27 +89,18 @@ class _NamePageState extends State<NamePage> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Text(
-                          'VICENTE JUÁREZ',
-                          style: GoogleFonts.novaMono(
-                              color: Colors.black, fontSize: 48),
-                          textAlign: TextAlign.center
-                        ),
-                        Text(
-                          S.current.jobTitle,
-                          style: GoogleFonts.novaMono(
-                              color: Colors.black, fontSize: 16),
-                          textAlign: TextAlign.center
-                        )
+                        Text('VICENTE JUÁREZ',
+                            style: Theme.of(context).textTheme.headline1,
+                            textAlign: TextAlign.center),
+                        Text(S.current.jobTitle,
+                            style: Theme.of(context).textTheme.subtitle1,
+                            textAlign: TextAlign.center)
                       ],
                     ),
                   ),
                   backgroundColor: Colors.transparent,
                   bottomNavigationBar: BottomNavigationBar(
                     type: BottomNavigationBarType.fixed,
-                    backgroundColor: materialYellow300,
-                    selectedItemColor: Colors.black,
-                    unselectedItemColor: Colors.black,
                     selectedFontSize: 14,
                     unselectedFontSize: 14,
                     onTap: (index) {
@@ -116,31 +113,39 @@ class _NamePageState extends State<NamePage> {
                               builder: (BuildContext context) {
                                 return Container(
                                   height: 200,
-                                  color: materialYellow400,
+                                  color: Theme.of(context).primaryColor,
                                   child: Center(
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
                                       mainAxisSize: MainAxisSize.min,
                                       children: <Widget>[
                                         Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             IconButton(
                                                 iconSize: 72,
-                                                icon: Image.asset('icons/flags/png/cl.png', package: 'country_icons'),
+                                                icon: Image.asset(
+                                                    'icons/flags/png/cl.png',
+                                                    package: 'country_icons'),
                                                 onPressed: () {
-                                                  html.window.open(cvURL['es'] ?? '#', '_blank');
+                                                  html.window.open(
+                                                      cvURL['es'] ?? '#',
+                                                      '_blank');
                                                   Navigator.pop(context);
-                                                }
-                                            ),
+                                                }),
                                             IconButton(
                                                 iconSize: 72,
-                                                icon: Image.asset('icons/flags/png/us.png', package: 'country_icons'),
+                                                icon: Image.asset(
+                                                    'icons/flags/png/us.png',
+                                                    package: 'country_icons'),
                                                 onPressed: () {
-                                                  html.window.open(cvURL['en'] ?? '#', '_blank');
+                                                  html.window.open(
+                                                      cvURL['en'] ?? '#',
+                                                      '_blank');
                                                   Navigator.pop(context);
-                                                }
-                                            ),
+                                                }),
                                           ],
                                         )
                                       ],
@@ -206,11 +211,13 @@ class _NamePageState extends State<NamePage> {
 class GameOfLifePainter extends CustomPainter {
   final GameOfLife gameState;
   final double dpr;
+  late final Paint paintStyle;
   late final int pixelSize;
 
   static const densityRatio = 32;
 
-  GameOfLifePainter(this.dpr, this.gameState) {
+  GameOfLifePainter(this.dpr, this.gameState, Color color) {
+    paintStyle = Paint()..color = color;
     pixelSize = pixelSizeCal(dpr);
   }
 
@@ -224,11 +231,10 @@ class GameOfLifePainter extends CustomPainter {
     gameState.markedForRedraw = false;
 
     final size = Size(pixelSize as double, pixelSize as double);
-    final paint = Paint()..color = materialYellow100;
 
     for (var point in currentState) {
       final Rect rect = point.offset(size) & size;
-      canvas.drawRect(rect, paint);
+      canvas.drawRect(rect, paintStyle);
     }
   }
 
