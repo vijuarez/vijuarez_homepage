@@ -48,12 +48,12 @@ class _NamePageState extends State<NamePage> {
 
   static Map<String, String> cvURL = {
     'es':
-        'https://drive.google.com/file/d/1C_yKmYw_8gC8DseeZ2HWSAOJJ1wgyypa/view?usp=sharing',
+        'https://drive.google.com/file/d/1kiXq6YIFUaJkMuTAUj7APNy2eAPLdJGf/view?usp=share_link',
     'en':
         'https://drive.google.com/file/d/11i6vojPlwkcrLD8WArkPzSie5oVZD4m7/view?usp=sharing'
   };
   static String githubURL = 'https://github.com/vijuarez';
-  static String email = 'vijuarez97@gmail.com';
+  static String email = 'vijuarez@uc.cl';
 
   @override
   Widget build(BuildContext context) {
